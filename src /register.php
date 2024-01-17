@@ -4,13 +4,15 @@ session_start();
 // Include database connection
 include('db_connect.php');
 
+$userType = ''; // Initialize $userType
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
     $userType = $_POST['user_type'];
 
     if ($userType == 'receiver') {
-        $bloodGroup = $_POST['blood_group'];
+        $bloodGroup = isset($_POST['blood_group']) ? $_POST['blood_group'] : '';
         $query = "SELECT * FROM users WHERE username='$username' AND user_type='receiver'";
         $result = mysqli_query($conn, $query);
 
@@ -32,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
     } elseif ($userType == 'hospital') {
-        $hospitalName = $_POST['hospital_name'];
+        $hospitalName = isset($_POST['hospital_name']) ? $_POST['hospital_name'] : '';
         $query = "SELECT * FROM hospitals WHERE username='$username'";
         $result = mysqli_query($conn, $query);
 
@@ -56,7 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -75,15 +76,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </select><br>
 
         <?php
-        // Show additional field for blood group if the user is a receiver
+        // Show additional field based on the selected user type
         if ($userType == 'receiver') {
             echo 'Blood Group: <input type="text" name="blood_group" required><br>';
         } elseif ($userType == 'hospital') {
             echo 'Hospital Name: <input type="text" name="hospital_name" required><br>';
         }
         ?>
-
+    
         <input type="submit" value="Register">
     </form>
+     <p>Already have an account? <a href="login.php">Login here</a></p>
 </body>
 </html>
